@@ -1,0 +1,54 @@
+<h1>Super Group Movie Application</h1>
+<h3 *ngIf="movieIdToUpdate; else create"> 
+   Update Movie for Id: {{movieIdToUpdate}}
+</h3>
+<ng-template #create>
+   <h3> Create New Movie </h3>
+</ng-template>
+<div>
+ <form [formGroup]="movieForm" (ngSubmit)="onMovieFormSubmit()">
+  <table>
+    <tr><td>Enter Title</td><td><input formControlName="title">
+	       <label *ngIf="movieForm.get('title').invalid && processValidation" [ngClass] = "'error'"> Title is required. </label>
+   	</td></tr>
+    <tr><td>Enter Category</td><td><input formControlName="category">
+	       <label *ngIf="movieForm.get('category').invalid && processValidation" [ngClass] = "'error'"> Category is required. </label>
+	</td></tr>	
+    <tr><td colspan="2">
+	    <button *ngIf="!movieIdToUpdate">CREATE</button>  
+		<button *ngIf="movieIdToUpdate">UPDATE</button>  
+	    <button (click)="backToCreateMovie()" *ngIf="movieIdToUpdate">Go Back</button>  
+	</td></tr>
+  </table>
+ </form> 
+ <br/>
+ <div *ngIf="statusCode; else processing">
+   <div *ngIf="statusCode === 201" [ngClass] = "'success'">
+	    Movie added successfully.
+   </div>   
+   <div *ngIf="statusCode === 409" [ngClass] = "'success'">
+        Movie already exists.
+   </div>   	
+   <div *ngIf="statusCode === 200" [ngClass] = "'success'">
+        Movie updated successfully.
+   </div>   	      
+   <div *ngIf="statusCode === 204" [ngClass] = "'success'">
+        Movie deleted successfully.
+   </div>   	   
+   <div *ngIf="statusCode === 500" [ngClass] = "'error'">
+        Internal Server Error.
+   </div>   	
+ </div>
+ <ng-template #processing>
+	<img *ngIf="requestProcessing" src="assets/images/loading.gif">
+ </ng-template>
+</div>
+<h3>Movie Details</h3>
+<table>
+  <tr><th> Id</th> <th>Title</th><th>Category</th><th></th><th></th></tr>
+  <tr *ngFor="let movie of allMovies" >
+    <td>{{movie.id}}</td> <td>{{movie.title}}</td> <td>{{movie.category}}</td>
+	<td><button type="button" (click)="loadMovieToEdit(movie.id)">Edit</button> </td> 
+	<td><button type="button" (click)="deleteMovie(movie.id)">Delete</button></td>
+  </tr>
+</table>
